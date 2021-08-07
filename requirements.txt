@@ -1,2 +1,4 @@
 telethon==1.23.0
 dotenv
+pyTelegramBotAPI==3.8.2
+

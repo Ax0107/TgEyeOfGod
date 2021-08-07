@@ -10,6 +10,7 @@ API_KEY = os.environ.get("API_KEY")
 USERNAME = os.environ.get("USERNAME")
 PHONE = os.environ.get("PHONE")
 
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 PATH_TO_LOGS = './logs/'
 LOG_LEVEL = logging.INFO
