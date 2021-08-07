@@ -11,6 +11,8 @@ USERNAME = os.environ.get("USERNAME")
 PHONE = os.environ.get("PHONE")
 
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
+SECOND_BOT_TOKEN = os.environ.get('SECOND_BOT_TOKEN')
+
 
 PATH_TO_LOGS = './logs/'
 LOG_LEVEL = logging.INFO
