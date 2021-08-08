@@ -13,9 +13,11 @@ PHONE = os.environ.get("PHONE")
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 SECOND_BOT_TOKEN = os.environ.get('SECOND_BOT_TOKEN')
 
+SPEC_REQUEST_PREFIX = '_R_'
 
 PATH_TO_LOGS = './logs/'
 LOG_LEVEL = logging.DEBUG
 LOG_FORMAT = "%(log_color)s %(asctime)s %(name)s-%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
 LOG_NAME_FORMAT = "%Y-%m-%d.log"
 HANDLER = logging.StreamHandler()
+

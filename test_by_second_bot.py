@@ -19,9 +19,8 @@ bot = telebot.TeleBot(SECOND_BOT_TOKEN)
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     logger.info(message.text)
-    while True:
-        bot.send_message(message.from_user.id, "Я бог, блять!11")
-        sleep(10)
+    sleep(6)
+    bot.send_message(message.from_user.id, f"Вот информация по запросу: {message.text}\n\nХАХАХАХ")
 
 
 if __name__ == "__main__":
