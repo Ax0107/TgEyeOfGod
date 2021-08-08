@@ -20,7 +20,7 @@ bot = telebot.TeleBot(SECOND_BOT_TOKEN)
 def get_text_messages(message):
     logger.info(message.text)
     while True:
-        bot.send_message(message.from_user.id, "Ммм, хэллоу, дорогой")
+        bot.send_message(message.from_user.id, "Я бог, блять!11")
         sleep(10)
 
 
