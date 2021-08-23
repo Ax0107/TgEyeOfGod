@@ -270,3 +270,5 @@ cython_debug/
 *.session
 
 logs/
+
+User-list.db

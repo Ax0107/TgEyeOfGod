@@ -2,3 +2,8 @@ telethon==1.23.0
 dotenv
 pyTelegramBotAPI==3.8.2
 
+
+python-dotenv~=0.19.0
+colorlog~=4.0.2
+SQLAlchemy~=1.4.20
+Werkzeug~=0.16.0
