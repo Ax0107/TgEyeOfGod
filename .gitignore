@@ -272,3 +272,6 @@ cython_debug/
 logs/
 
 User-list.db
+
+*.session
+*.session-journal

@@ -31,15 +31,18 @@ class User(Base):
 
     def ban_user(self):
         self.is_banned = True
+        session.commit()
 
     def change_subscription_datetime(self, new_datetime: datetime):
         self.subscribe_due = new_datetime
+        session.commit()
 
     def get_state(self):
         return self.current_state
 
     def set_state(self, new_state):
         self.current_state = new_state
+        session.commit()
 
 
 def register_user(telegram_id, name, phone, current_state):
