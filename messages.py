@@ -4,7 +4,7 @@
 
 """
 import telebot
-
+from config import SPEQ_REQUEST_SPLITER
 MESSAGES = {
     'keyboards': {
         'send_phone': 'Отправить номер телефона',
@@ -59,6 +59,15 @@ class KEYBOARDS(object):
         button = telebot.types.KeyboardButton(text=MESSAGES['keyboards']['SEARCH']['go_main'])
         keyboard.add(button)
 
+        return keyboard
+
+    def parse_keyboard(self, json_kb):
+        keyboard = telebot.types.InlineKeyboardMarkup(row_width=3)
+        for i, row in enumerate(json_kb['rows']):
+            for j, btn in enumerate(row['buttons']):
+                button = telebot.types.InlineKeyboardButton(text=btn['text'],
+                                                            callback_data=f'BTN-CLICK{SPEQ_REQUEST_SPLITER}{i}-{j}')
+                keyboard.add(button)
         return keyboard
 
 

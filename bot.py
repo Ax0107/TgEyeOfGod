@@ -3,9 +3,10 @@
 Файл для работы бота
 
 """
+import json
 
 import telebot
-from config import BOT_TOKEN, SPEC_REQUEST_PREFIX
+from config import BOT_TOKEN, SPEC_REQUEST_PREFIX, SPEC_REQUEST_PREFIX_click, SPEQ_REQUEST_SPLITER
 from messages import MESSAGES, Keyboards
 from sqlalchemy.exc import NoResultFound
 from database import session, User, register_user
@@ -56,7 +57,7 @@ def handle_main_state(message):
 """ ---------------------------------------------- SEARCHING --------------------------------------------------------"""
 
 
-@bot.message_handler(content_types=['text'], func=lambda msg: msg.text == MESSAGES['keyboards']['MAIN']['search'])
+@bot.message_handler(func=lambda message: message.text == MESSAGES['keyboards']['MAIN']['search'])
 def handle_search_state(message):
     obj = session.query(User).filter_by(telegram_id=message.chat.id).one()
     obj.set_state('search')
@@ -79,8 +80,9 @@ def handle_search_state__start_search(message):
 
     """
 
-    bot.send_message(CLIENT_ID, f"{SPEC_REQUEST_PREFIX}{message.from_user.id}:{message.text}")
+    bot.send_message(CLIENT_ID, f"{SPEC_REQUEST_PREFIX}{message.from_user.id}{SPEQ_REQUEST_SPLITER}{message.text}")
     bot.register_next_step_handler_by_chat_id(chat_id=message.chat.id, callback=handle_end_search)
+
 
 @bot.message_handler(content_types=['text'], func=lambda msg: msg.from_user.id == CLIENT_ID)
 def handle_response(response_message):
@@ -94,18 +96,34 @@ def handle_response(response_message):
     [*] - Текущее состояние
     """
 
-    data = response_message.text.split(':')
+    data = response_message.text.split(SPEQ_REQUEST_SPLITER)
     try:
-        text = ':'.join(data[1:])
+        text = data[1].replace(SPEQ_REQUEST_SPLITER, '')
         user_id = data[0]
-        # Отправка ответа
-        bot.send_message(user_id, text)
-        bot.send_message(user_id, MESSAGES['end_search'], reply_markup=Keyboards.end_search())
+        reply_markup = data[2]
 
+        if reply_markup:
+            reply_markup = Keyboards.parse_keyboard(json.loads(reply_markup))
+
+        if len(data) > 3 and data[3]:
+            path = data[3]
+            doc = open(path, 'rb')
+            bot.send_document(user_id, doc, caption=text)
+        else:
+            # Отправка ответа
+            bot.send_message(user_id, text, reply_markup=reply_markup)
+            # bot.send_message(user_id, MESSAGES['end_search'], reply_markup=Keyboards.end_search())
 
     except Exception as e:
-        logger.error(e)
-        handle_message(response_message)
+        logger.error(f'error during sending msg to user: {e}. {data}')
+        # handle_message(response_message)
+
+
+@bot.callback_query_handler(func=lambda call: call.data.split(SPEQ_REQUEST_SPLITER)[0] == 'BTN-CLICK')
+def handle_search_state_buttons(call):
+    user_id = call.from_user.id
+    bot.send_message(CLIENT_ID, f"{SPEC_REQUEST_PREFIX_click}{user_id}{SPEQ_REQUEST_SPLITER}{call.data.split(SPEQ_REQUEST_SPLITER)[1]}")
+    bot.register_next_step_handler_by_chat_id(chat_id=user_id, callback=handle_end_search)
 
 
 def handle_end_search(message):
@@ -117,7 +135,6 @@ def handle_end_search(message):
         return handle_search_state(message)
     else:
         bot.send_message(message.chat.id, MESSAGES['no_command'], reply_markup=Keyboards.end_search())
-        bot.register_next_step_handler_by_chat_id(chat_id=message.chat.id, callback=handle_end_search)
 
 
 @bot.message_handler(content_types=['text'], func=lambda msg: msg.from_user.id != CLIENT_ID)
